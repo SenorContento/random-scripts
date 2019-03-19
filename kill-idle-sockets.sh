@@ -13,7 +13,6 @@ sudo=/usr/bin/sudo
 perl=/usr/bin/perl
 rev=/usr/bin/rev
 sed=/bin/sed
-tcpkill=/usr/sbin/tcpkill
 
 killcx=/home/web/programs/killconnection/killcx.pl
 
