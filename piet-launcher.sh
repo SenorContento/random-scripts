@@ -13,6 +13,13 @@
 # White: \u001b[37m
 # Reset: \u001b[0m
 
+# websocketd Information
+# https://github.com/joewalnes/websocketd/wiki/Environment-variables
+
+username="piet"
+passwordFile="piet-password.txt"
+database="piet"
+
 black="\u001b[30m"
 red="\u001b[31m"
 green="\u001b[32m"
@@ -25,20 +32,71 @@ reset="\u001b[0m"
 
 stdbuf=/usr/bin/stdbuf
 npiet=/usr/local/bin/npiet
+dirname=/usr/bin/dirname
+mysql=/usr/bin/mysql
+cat=/bin/cat
+echo=echo #/bin/echo
+printf=/usr/bin/printf
+cut=/usr/bin/cut
+#awk=/usr/bin/awk
+#sed=/bin/sed
+tr=/usr/bin/tr
+
+executeMySQL() {
+  # 's/-\([0-9.]\+\)/(\1)/g'
+  #stripChars="s/\(\[a-z\]||[A-Z]||[0-9]\)/g" #/([a-z]||[A-Z]||[0-9])\w+/g
+  querystart="$1"
+  queryend="$2"
+  userinput="$3"
+
+  # https://stackabuse.com/substrings-in-bash/
+  limiturl=$($echo ${userinput:1:10}) # Limit String to 10 Characters Max
+  cleanurl=$($echo "$limiturl" | $cut -d/ -f2)
+  #$echo "Clean URL: $cleanurl"
+
+  # https://stackoverflow.com/a/20007549/6828099
+  #stripped=$($echo "$userinput" | $sed $stripChars)
+  stripped=$($echo "$cleanurl" | $tr -cd '[:alnum:]')
+  #$echo "Stripped: $stripped"
+
+  #$echo "Not Sanitized: ""$querystart$cleanurl$queryend"
+
+  # Sanitize MySQL Input - https://stackoverflow.com/a/4383994/6828099
+  sanitized=$($printf "%q" "$stripped")
+  $echo "Sanitized: ""$querystart$sanitized$queryend"
+  # Printf is Not Perfect: hellothere\'\"
+  #$echo "\"$sanitized\""
+
+  if [ "$sanitized" == "''" ]; then # Empty String
+    # TODO: Set Default Program ID Here
+    #mysqlOut="/home/web/programs/piet/images/pietquest.png"
+    #echo "Empty"
+    return 0 # Remove Me When Added Default Program ID
+  fi
+  #echo "Ran"
+
+  mysqlOut=$({
+    $echo $password
+  } | $mysql -u $username -D $database -e "$querystart$sanitized$queryend" -p 2>&1)
+}
 
 #stdbuf=/usr/local/bin/stdbuf
 #npiet=/usr/local/bin/npiet
 
-if [ $# -lt 1 ]
-then
-  echo -e $red "You Need To Specify A Command!!!"
-  echo -e "./program piet-program-path" $reset
-  exit
-fi
+cd $($dirname "$0") # Changes to Program Directory
+password=$($cat "$passwordFile")
 
-program="$1"
+# https://stackoverflow.com/a/39754497/6828099
+executeMySQL "select * from programs where programid=" " LIMIT 1;" "$PATH_INFO"
 
-echo -e $cyan"Rover Piet Server"
-echo -e $green"------------------------------------------------"
-$npiet $program | $stdbuf -o0 awk '{print "'$(echo -e $cyan)'" $0 "'$(echo -e $reset)'"}'
-echo -e $reset
+$echo -e $cyan"Rover Piet Server"
+#$echo -e $yellow"PWD: $PWD"
+#$echo -e $red"PW: $password"
+$echo -e $red"MySQL Output: $mysqlOut"
+
+
+program="/home/web/programs/piet/images/pietquest.png"
+#$echo -e $yellow"Path: $PATH_INFO" # This environment variable is created by WebSocketd!!!
+$echo -e $green"------------------------------------------------"
+$npiet $program | $stdbuf -o0 awk '{print "'$($echo -e $cyan)'" $0 "'$($echo -e $reset)'"}'
+$echo -e $reset
