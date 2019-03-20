@@ -1,6 +1,7 @@
 #!/bin/bash
 # Original Test: /home/alex/websocketd/websocketd --port=8081 bash -c '/usr/bin/stdbuf -o0 /usr/local/bin/npiet /home/web/programs/piet/images/pietquest.png 2>&1'
-# Current Command: /home/alex/websocketd/websocketd --port=8081 bash -c '/home/alex/programs/piet-launcher.sh /home/web/programs/piet/images/pietquest.png 2>&1'
+# Old Command: /home/alex/websocketd/websocketd --port=8081 bash -c '/home/alex/programs/piet-launcher.sh /home/web/programs/piet/images/pietquest.png 2>&1'
+# Current Command: /home/alex/websocketd/websocketd --port=8081 bash -c '/usr/bin/setuidgid piet /home/alex/programs/piet-launcher.sh 2>&1'
 
 # Colors: http://www.lihaoyi.com/post/BuildyourownCommandLinewithANSIescapecodes.html
 # Black: \u001b[30m
@@ -89,15 +90,16 @@ password=$($cat "$passwordFile")
 # https://stackoverflow.com/a/39754497/6828099
 executeMySQL "select * from programs where programid=" " LIMIT 1;" "$PATH_INFO"
 
-$echo -e $cyan"Rover Piet Server"
-#$echo -e $yellow"PWD: $PWD"
-#$echo -e $red"PW: $password"
-$echo -e $red"MySQL Output: $mysqlOut"
+$echo -e $cyan"Rover Piet Server"$reset
+#$echo -e $red"Linux User: "`whoami`$reset # To Test Privileges Were Dropped Succesfully
+#$echo -e $yellow"PWD: $PWD"$reset
+#$echo -e $red"PW: $password"$reset
+$echo -e $red"MySQL Output: $mysqlOut"$reset
 
 
 program="/home/web/programs/piet/images/pietquest.png"
 #$echo -e $yellow"Path: $PATH_INFO" # This environment variable is created by WebSocketd!!!
-$echo -e $green"------------------------------------------------"
+$echo -e $green"------------------------------------------------"$reset
 $npiet "$program" | $stdbuf -o0 $awk '{print "'$($echo -e $cyan)'" $0 "'$($echo -e $reset)'"}'
 $echo -e $reset
 
