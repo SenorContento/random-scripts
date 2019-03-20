@@ -51,7 +51,7 @@ executeMySQL() {
   userinput="$3"
 
   # https://stackabuse.com/substrings-in-bash/
-  limiturl=$($echo ${userinput:1:15}) # Limit String to 15 Characters Max (For PHP uniqid)
+  limiturl=$($echo ${userinput:1:13}) # Limit String to 13 Characters Max (For PHP uniqid)
   cleanurl=$($echo "$limiturl" | $cut -d/ -f2)
   #$echo "Clean URL: $cleanurl"
 
