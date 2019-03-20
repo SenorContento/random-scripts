@@ -38,7 +38,7 @@ cat=/bin/cat
 echo=echo #/bin/echo
 printf=/usr/bin/printf
 cut=/usr/bin/cut
-#awk=/usr/bin/awk
+awk=/usr/bin/awk
 #sed=/bin/sed
 tr=/usr/bin/tr
 
@@ -98,7 +98,7 @@ $echo -e $red"MySQL Output: $mysqlOut"
 program="/home/web/programs/piet/images/pietquest.png"
 #$echo -e $yellow"Path: $PATH_INFO" # This environment variable is created by WebSocketd!!!
 $echo -e $green"------------------------------------------------"
-$npiet "$program" | $stdbuf -o0 awk '{print "'$($echo -e $cyan)'" $0 "'$($echo -e $reset)'"}'
+$npiet "$program" | $stdbuf -o0 $awk '{print "'$($echo -e $cyan)'" $0 "'$($echo -e $reset)'"}'
 $echo -e $reset
 
 # Todo: Add Support for STDIN input with echo "$uservar-from-pathinfo" | $npiet...
