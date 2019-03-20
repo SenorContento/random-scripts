@@ -88,7 +88,7 @@ cd $($dirname "$0") # Changes to Program Directory
 password=$($cat "$passwordFile")
 
 # https://stackoverflow.com/a/39754497/6828099
-executeMySQL "select * from programs where programid=" " LIMIT 1;" "$PATH_INFO"
+executeMySQL "select * from programs where programid=\"" "\" LIMIT 1;" "$PATH_INFO"
 
 $echo -e $cyan"Rover Piet Server"$reset
 #$echo -e $red"Linux User: "`whoami`$reset # To Test Privileges Were Dropped Succesfully
