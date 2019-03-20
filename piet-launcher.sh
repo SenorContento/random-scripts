@@ -77,7 +77,7 @@ executeMySQL() {
 
   mysqlOut=$({
     $echo $password
-  } | $mysql -u $username -D $database -e "$querystart$sanitized$queryend" -p 2>&1)
+  } | $mysql -u $username -D $database -e "$querystart$sanitized$queryend" -p 2>&1) # TODO: Remove Redirect Error For Output
 }
 
 #stdbuf=/usr/local/bin/stdbuf
@@ -101,4 +101,4 @@ $echo -e $green"------------------------------------------------"
 $npiet "$program" | $stdbuf -o0 awk '{print "'$($echo -e $cyan)'" $0 "'$($echo -e $reset)'"}'
 $echo -e $reset
 
-# Add Support for STDIN input with echo "$uservar-from-pathinfo" | $npiet...
+# Todo: Add Support for STDIN input with echo "$uservar-from-pathinfo" | $npiet...
