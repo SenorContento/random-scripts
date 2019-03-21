@@ -17,6 +17,10 @@
 # websocketd Information
 # https://github.com/joewalnes/websocketd/wiki/Environment-variables
 
+# Helps limit number of allowed sessions globally
+# Adjust this to what your machine can handle
+allowedNumberOfProcesses=10
+
 username="piet"
 passwordFile="piet-password.txt"
 database="piet"
@@ -58,6 +62,16 @@ tr=/usr/bin/tr
 nice=/usr/bin/nice
 exit=exit
 grep=/bin/grep
+ps=/bin/ps
+wc=/usr/bin/wc
+whoami=/usr/bin/whoami
+
+numberOfProcesses=$($ps -fu $($whoami) | $grep "$npiet" | $wc -l)
+
+if [ "$numberOfProcesses" -gt "$allowedNumberOfProcesses" ]; then
+  $echo -e $red"Sorry, but the number of allowed actively running npiet processes is $allowedNumberOfProcesses!!! Please try again later!!!"$reset
+  $exit
+fi
 
 executeMySQL() {
   # 's/-\([0-9.]\+\)/(\1)/g'
@@ -125,6 +139,7 @@ allowed=$($echo "$mysqlOut" | $cut -f8)
 banreason=$($echo "$mysqlOut" | $cut -f9)
 reported=$($echo "$mysqlOut" | $cut -f10)
 cleared=$($echo "$mysqlOut" | $cut -f11)
+dateadded=$($echo "$mysqlOut" | $cut -f12)
 
 program=$uploadDirectory"piet_"$programID".png"
 
@@ -163,6 +178,7 @@ $echo -e $yellow"Checksum: $checkSum"$reset
 #$echo -e $yellow"Ban Reason: $banreason"$reset
 #$echo -e $yellow"Reported: $reported"$reset
 #$echo -e $yellow"Cleared: $cleared"$reset
+#$echo -e $yellow"Date Added: $dateadded"$reset
 $echo -e $green"------------------------------------------------"$reset
 $echo -e $yellow"Arguments: $transarguments"$reset
 $echo -e $green"------------------------------------------------"$reset
