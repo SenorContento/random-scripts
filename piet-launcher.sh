@@ -17,6 +17,8 @@
 # websocketd Information
 # https://github.com/joewalnes/websocketd/wiki/Environment-variables
 
+userIPAddress=$HTTP_X_REAL_IP
+
 # Helps limit number of allowed sessions globally
 # Adjust this to what your machine can handle
 allowedNumberOfProcesses=10
@@ -122,7 +124,7 @@ password=$($cat "$passwordFile")
 executeMySQL "select * from programs where programid=\"" "\" LIMIT 1;" "$PATH_INFO"
 
 $echo -e $cyan"Rover Piet Server"$reset
-#$echo -e $red"Linux User: "`whoami`$reset # To Test Privileges Were Dropped Succesfully
+#$echo -e $red"Linux User: "`whoami`$reset # To Test Privileges Were Dropped Successfully
 #$echo -e $yellow"PWD: $PWD"$reset
 #$echo -e $red"PW: $password"$reset
 #$echo -e $red"MySQL Output: $mysqlOut"$reset
@@ -167,6 +169,8 @@ else
 fi
 
 #$echo -e $yellow"Path: $PATH_INFO"$reset # This environment variable is created by WebSocketd!!!
+$echo -e $yellow"Your IP Address: $userIPAddress"$reset # This header is because I now use NGinx to proxy the requests with TLS Support
+$echo -e $green"------------------------------------------------"$reset
 $echo -e $yellow"Program Name: $programName"$reset
 #$echo -e $yellow"Row ID: $rowID"$reset
 $echo -e $yellow"Program ID: $programID"$reset
