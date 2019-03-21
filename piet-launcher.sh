@@ -27,6 +27,13 @@ defaultPietProgram="5c92cd6054ce1"
 uploadDirectory="/var/web/term-uploads/"
 niceValue=19
 
+# This is a lot, only use if expecting long running programs
+#executionSteps=10000000 # 10 Million
+
+# This seems reasonable. It prevents long running processes
+# but allows for extended programs such as pietquest.
+executionSteps=1000000 # 1 Million
+
 black="\u001b[30m"
 red="\u001b[31m"
 green="\u001b[32m"
@@ -142,12 +149,12 @@ $echo -e $green"------------------------------------------------"$reset
 
 if [ -z $arguments ]; then
   # 2>/dev/null disables showing stderr
-  $nice -n $niceValue $npiet "$program" 2>/dev/null | $stdbuf -o0 $awk '{print "'$($echo -e $cyan)'" $0 "'$($echo -e $reset)'"}' &
+  $nice -n $niceValue $npiet -e "$executionSteps" "$program" 2>/dev/null | $stdbuf -o0 $awk '{print "'$($echo -e $cyan)'" $0 "'$($echo -e $reset)'"}' &
   #$npiet "$program" | $stdbuf -o0 $awk '{print "'$($echo -e $cyan)'" $0 "'$($echo -e $reset)'"}'
   # This get's awk's PID
   child_pid=$!
 else
-  $nice -n $niceValue $echo -e "$arguments" | $npiet "$program" 2>/dev/null | $stdbuf -o0 $awk '{print "'$($echo -e $cyan)'" $0 "'$($echo -e $reset)'"}' &
+  $nice -n $niceValue $echo -e "$arguments" | $npiet -e "$executionSteps" "$program" 2>/dev/null | $stdbuf -o0 $awk '{print "'$($echo -e $cyan)'" $0 "'$($echo -e $reset)'"}' &
   #$echo -e "$arguments" | $npiet "$program" | $stdbuf -o0 $awk '{print "'$($echo -e $cyan)'" $0 "'$($echo -e $reset)'"}'
   # This get's awk's PID
   child_pid=$!
@@ -161,5 +168,13 @@ $echo -e $reset
 # The solution seems to be simpler than I thought. Just explicitly exit the program.
 # The npiet program seems to keep running if I break it, like giving stdin to a piet program
 # not meant to take in the input. I am still testing this script to ensure this bug is fixed.
+
+# It is still possible for someone to intentionally waste processing power by
+# putting a really long input into a program such as cowsay. This person can
+# also just write a program to use an infinite loop.
+# I just set a cap on how many instructions can be executed before npiet quits.
+# This may not actually stop the infinite loop though (as noted by passing a really long string to cowsay),
+# however, this may not be an issue as it uses 0 cpu time. I tested this cowsay instance on my laptop and not the pi,
+# So, the bash script may kill the cowsay program if it gets stuck. I have to test it.
 
 $exit
