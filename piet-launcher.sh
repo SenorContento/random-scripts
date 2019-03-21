@@ -57,6 +57,7 @@ awk=/usr/bin/awk
 tr=/usr/bin/tr
 nice=/usr/bin/nice
 exit=exit
+grep=/bin/grep
 
 executeMySQL() {
   # 's/-\([0-9.]\+\)/(\1)/g'
@@ -162,17 +163,27 @@ $echo -e $green"------------------------------------------------"$reset
 
 if [ -z $arguments ]; then
   # 2>/dev/null disables showing stderr
-  $nice -n $niceValue $npiet -e "$executionSteps" "$program" 2>/dev/null | $nice -n $niceValue $stdbuf -o0 $awk '{print "'$($echo -e $cyan)'" $0 "'$($echo -e $reset)'"}' &
+  { error=$( { { $nice -n $niceValue $npiet -e "$executionSteps" "$program" | $nice -n $niceValue $stdbuf -o0 $awk '{print "'$($echo -e $cyan)'" $0 "'$($echo -e $reset)'"}' & } 1>&3 ; } 2>&1); } 3>&1
+  #$nice -n $niceValue $npiet -e "$executionSteps" "$program" 2>/dev/null | $nice -n $niceValue $stdbuf -o0 $awk '{print "'$($echo -e $cyan)'" $0 "'$($echo -e $reset)'"}' &
   #$npiet "$program" | $stdbuf -o0 $awk '{print "'$($echo -e $cyan)'" $0 "'$($echo -e $reset)'"}'
   # This get's awk's PID
   child_pid=$!
 else
-  $nice -n $niceValue $echo -e "$arguments" | $nice -n $niceValue $npiet -e "$executionSteps" "$program" 2>/dev/null | $nice -n $niceValue $stdbuf -o0 $awk '{print "'$($echo -e $cyan)'" $0 "'$($echo -e $reset)'"}' &
+  # Capture STDERR into Variable: https://stackoverflow.com/a/52587939/6828099
+  { error=$( { { $nice -n $niceValue $echo -e "$arguments" | $nice -n $niceValue $npiet -e "$executionSteps" "$program" | $nice -n $niceValue $stdbuf -o0 $awk '{print "'$($echo -e $cyan)'" $0 "'$($echo -e $reset)'"}' & } 1>&3 ; } 2>&1); } 3>&1
+  #$nice -n $niceValue $echo -e "$arguments" | $nice -n $niceValue $npiet -e "$executionSteps" "$program" 2>/dev/null | $nice -n $niceValue $stdbuf -o0 $awk '{print "'$($echo -e $cyan)'" $0 "'$($echo -e $reset)'"}' &
   #$echo -e "$arguments" | $npiet "$program" | $stdbuf -o0 $awk '{print "'$($echo -e $cyan)'" $0 "'$($echo -e $reset)'"}'
   # This get's awk's PID
   child_pid=$!
 fi
 $echo -e $reset
+
+if [ ! -z "$error" ]; then
+  # Because I Only Want To Display Max Execution Steps Error
+  selectedError="configured execution steps exceeded"
+  parseError=$($echo "$error" | $grep "$selectedError")
+  $echo -e $red"$parseError"$reset
+fi
 
 # So, the npiet process may keep running in the background even when the websocket is closed
 # This doesn't seem consistent, so further testing is needed. For Now, I am just lowering the
