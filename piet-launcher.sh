@@ -130,6 +130,7 @@ fi
 $echo -e $green"------------------------------------------------"$reset
 #$echo -e $yellow"Path: $PATH_INFO"$reset # This environment variable is created by WebSocketd!!!
 $echo -e $yellow"Program Name: $programName"$reset
+#$echo -e $yellow"Row ID: $rowID"$reset
 $echo -e $yellow"Program ID: $programID"$reset
 $echo -e $yellow"Original File Name: $originalfilename"$reset
 #$echo -e $yellow"Uploader IP: $uploaderIP"$reset
