@@ -17,6 +17,7 @@
 # websocketd Information
 # https://github.com/joewalnes/websocketd/wiki/Environment-variables
 
+# This header is because I now use NGinx to proxy the requests with TLS Support
 userIPAddress=$HTTP_X_REAL_IP
 
 # Helps limit number of allowed sessions globally
@@ -169,7 +170,7 @@ else
 fi
 
 #$echo -e $yellow"Path: $PATH_INFO"$reset # This environment variable is created by WebSocketd!!!
-$echo -e $yellow"Your IP Address: $userIPAddress"$reset # This header is because I now use NGinx to proxy the requests with TLS Support
+$echo -e $yellow"Your IP Address: $userIPAddress"$reset
 $echo -e $green"------------------------------------------------"$reset
 $echo -e $yellow"Program Name: $programName"$reset
 #$echo -e $yellow"Row ID: $rowID"$reset
