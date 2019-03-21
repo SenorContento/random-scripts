@@ -162,12 +162,12 @@ $echo -e $green"------------------------------------------------"$reset
 
 if [ -z $arguments ]; then
   # 2>/dev/null disables showing stderr
-  $nice -n $niceValue $npiet -e "$executionSteps" "$program" 2>/dev/null | $stdbuf -o0 $awk '{print "'$($echo -e $cyan)'" $0 "'$($echo -e $reset)'"}' &
+  $nice -n $niceValue $npiet -e "$executionSteps" "$program" 2>/dev/null | $nice -n $niceValue $stdbuf -o0 $awk '{print "'$($echo -e $cyan)'" $0 "'$($echo -e $reset)'"}' &
   #$npiet "$program" | $stdbuf -o0 $awk '{print "'$($echo -e $cyan)'" $0 "'$($echo -e $reset)'"}'
   # This get's awk's PID
   child_pid=$!
 else
-  $nice -n $niceValue $echo -e "$arguments" | $npiet -e "$executionSteps" "$program" 2>/dev/null | $stdbuf -o0 $awk '{print "'$($echo -e $cyan)'" $0 "'$($echo -e $reset)'"}' &
+  $nice -n $niceValue $echo -e "$arguments" | $nice -n $niceValue $npiet -e "$executionSteps" "$program" 2>/dev/null | $nice -n $niceValue $stdbuf -o0 $awk '{print "'$($echo -e $cyan)'" $0 "'$($echo -e $reset)'"}' &
   #$echo -e "$arguments" | $npiet "$program" | $stdbuf -o0 $awk '{print "'$($echo -e $cyan)'" $0 "'$($echo -e $reset)'"}'
   # This get's awk's PID
   child_pid=$!
