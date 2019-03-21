@@ -21,6 +21,9 @@ username="piet"
 passwordFile="piet-password.txt"
 database="piet"
 
+# This is the Piet's Quest Program
+defaultPietProgram="5c92cd6054ce1"
+
 uploadDirectory="/var/web/term-uploads/"
 niceValue=19
 
@@ -74,9 +77,8 @@ executeMySQL() {
   #$echo "\"$sanitized\""
 
   if [ "$sanitized" == "''" ]; then # Empty String
-    # TODO: Set Default Program ID Here
-    mysqlOut="0	5c92cd6054ce1	Piet Quest	pietquest.png	Admin	Default Program For Server"
-    return 0
+    # Set Default Program ID Here
+    sanitized=$defaultPietProgram
   fi
   #echo "Ran"
 
