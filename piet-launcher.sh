@@ -120,11 +120,24 @@ originalfilename=$($echo "$mysqlOut" | $cut -f4)
 uploaderIP=$($echo "$mysqlOut" | $cut -f5)
 aboutProg=$($echo "$mysqlOut" | $cut -f6)
 checkSum=$($echo "$mysqlOut" | $cut -f7)
+allowed=$($echo "$mysqlOut" | $cut -f8)
 
 program=$uploadDirectory"piet_"$programID".png"
 
 # id  programid programname filename  uploaderipaddress programabout
 # "1	5c92c662a53ef	Not Set	cowsay.png	71.31.185.234	Not Set" # Only this is output
+
+$echo -e $green"------------------------------------------------"$reset
+
+if [ -z $programID ]; then
+  $echo -e $red"You Need To Specify A Valid Program ID!!!"$reset
+  $exit
+fi
+
+if [ "$allowed" -eq "0" ]; then
+  $echo -e $red"Sorry, This Image Was Banned!!!"$reset
+  $exit
+fi
 
 arguments=$($echo "$PATH_INFO" | $cut -d/ -f3)
 
@@ -134,7 +147,6 @@ else
   transarguments=$arguments
 fi
 
-$echo -e $green"------------------------------------------------"$reset
 #$echo -e $yellow"Path: $PATH_INFO"$reset # This environment variable is created by WebSocketd!!!
 $echo -e $yellow"Program Name: $programName"$reset
 #$echo -e $yellow"Row ID: $rowID"$reset
@@ -143,6 +155,7 @@ $echo -e $yellow"Original File Name: $originalfilename"$reset
 #$echo -e $yellow"Uploader IP: $uploaderIP"$reset
 #$echo -e $yellow"About Program: $aboutProg"$reset
 $echo -e $yellow"Checksum: $checkSum"$reset
+#$echo -e $yellow"Allowed: $allowed"$reset
 $echo -e $green"------------------------------------------------"$reset
 $echo -e $yellow"Arguments: $transarguments"$reset
 $echo -e $green"------------------------------------------------"$reset
