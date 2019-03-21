@@ -122,6 +122,9 @@ uploaderIP=$($echo "$mysqlOut" | $cut -f5)
 aboutProg=$($echo "$mysqlOut" | $cut -f6)
 checkSum=$($echo "$mysqlOut" | $cut -f7)
 allowed=$($echo "$mysqlOut" | $cut -f8)
+banreason=$($echo "$mysqlOut" | $cut -f9)
+reported=$($echo "$mysqlOut" | $cut -f10)
+cleared=$($echo "$mysqlOut" | $cut -f11)
 
 program=$uploadDirectory"piet_"$programID".png"
 
@@ -157,6 +160,9 @@ $echo -e $yellow"Original File Name: $originalfilename"$reset
 #$echo -e $yellow"About Program: $aboutProg"$reset
 $echo -e $yellow"Checksum: $checkSum"$reset
 #$echo -e $yellow"Allowed: $allowed"$reset
+#$echo -e $yellow"Ban Reason: $banreason"$reset
+#$echo -e $yellow"Reported: $reported"$reset
+#$echo -e $yellow"Cleared: $cleared"$reset
 $echo -e $green"------------------------------------------------"$reset
 $echo -e $yellow"Arguments: $transarguments"$reset
 $echo -e $green"------------------------------------------------"$reset
