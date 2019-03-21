@@ -110,6 +110,7 @@ programName=$($echo "$mysqlOut" | $cut -f3) # Tab is default delimiter
 originalfilename=$($echo "$mysqlOut" | $cut -f4)
 uploaderIP=$($echo "$mysqlOut" | $cut -f5)
 aboutProg=$($echo "$mysqlOut" | $cut -f6)
+checkSum=$($echo "$mysqlOut" | $cut -f7)
 
 program=$uploadDirectory"piet_"$programID".png"
 
@@ -125,13 +126,15 @@ else
 fi
 
 $echo -e $green"------------------------------------------------"$reset
-#$echo -e $yellow"Path: $PATH_INFO" # This environment variable is created by WebSocketd!!!
-$echo -e $yellow"Program Name: $programName"
-$echo -e $yellow"Program ID: $programID"
-$echo -e $yellow"Original File Name: $originalfilename"
-$echo -e $yellow"Arguments: $transarguments"
-#$echo -e $yellow"Uploader IP: $uploaderIP"
-#$echo -e $yellow"About Program: $aboutProg"
+#$echo -e $yellow"Path: $PATH_INFO"$reset # This environment variable is created by WebSocketd!!!
+$echo -e $yellow"Program Name: $programName"$reset
+$echo -e $yellow"Program ID: $programID"$reset
+$echo -e $yellow"Original File Name: $originalfilename"$reset
+#$echo -e $yellow"Uploader IP: $uploaderIP"$reset
+#$echo -e $yellow"About Program: $aboutProg"$reset
+$echo -e $yellow"Checksum: $checkSum"$reset
+$echo -e $green"------------------------------------------------"$reset
+$echo -e $yellow"Arguments: $transarguments"$reset
 $echo -e $green"------------------------------------------------"$reset
 
 if [ -z $arguments ]; then
