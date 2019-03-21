@@ -100,7 +100,7 @@ $echo -e $cyan"Rover Piet Server"$reset
 #$echo -e $red"PW: $password"$reset
 #$echo -e $red"MySQL Output: $mysqlOut"$reset
 
-# TODO: Why does injecting tabs into the column data not break it?
+# TODO: Why does injecting tabs into the column data not break parsing the parameters?
 rowID=$($echo "$mysqlOut" | $cut -f1)
 programID=$($echo "$mysqlOut" | $cut -f2)
 programName=$($echo "$mysqlOut" | $cut -f3) # Tab is default delimiter
@@ -113,15 +113,32 @@ program=$uploadDirectory"piet_"$programID".png"
 # id  programid programname filename  uploaderipaddress programabout
 # "1	5c92c662a53ef	Not Set	cowsay.png	71.31.185.234	Not Set" # Only this is output
 
+arguments=$($echo "$PATH_INFO" | $cut -d/ -f3)
+
+if [ -z $arguments ]; then
+  transarguments="None"
+else
+  transarguments=$arguments
+fi
+
 $echo -e $green"------------------------------------------------"$reset
 #$echo -e $yellow"Path: $PATH_INFO" # This environment variable is created by WebSocketd!!!
 $echo -e $yellow"Program Name: $programName"
 $echo -e $yellow"Program ID: $programID"
 $echo -e $yellow"Original File Name: $originalfilename"
+$echo -e $yellow"Arguments: $transarguments"
 #$echo -e $yellow"Uploader IP: $uploaderIP"
 #$echo -e $yellow"About Program: $aboutProg"
 $echo -e $green"------------------------------------------------"$reset
-$npiet "$program" | $stdbuf -o0 $awk '{print "'$($echo -e $cyan)'" $0 "'$($echo -e $reset)'"}'
+
+if [ -z $arguments ]; then
+  # 2>/dev/null disables showing stderr
+  $npiet "$program" 2>/dev/null | $stdbuf -o0 $awk '{print "'$($echo -e $cyan)'" $0 "'$($echo -e $reset)'"}'
+  #$npiet "$program" | $stdbuf -o0 $awk '{print "'$($echo -e $cyan)'" $0 "'$($echo -e $reset)'"}'
+else
+  $echo -e "$arguments" | $npiet "$program" 2>/dev/null | $stdbuf -o0 $awk '{print "'$($echo -e $cyan)'" $0 "'$($echo -e $reset)'"}'
+  #$echo -e "$arguments" | $npiet "$program" | $stdbuf -o0 $awk '{print "'$($echo -e $cyan)'" $0 "'$($echo -e $reset)'"}'
+fi
 $echo -e $reset
 
 # Todo: Add Support for STDIN input with echo "$uservar-from-pathinfo" | $npiet...
