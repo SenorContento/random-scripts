@@ -22,6 +22,7 @@ passwordFile="piet-password.txt"
 database="piet"
 
 uploadDirectory="/var/web/term-uploads/"
+niceValue=19
 
 black="\u001b[30m"
 red="\u001b[31m"
@@ -44,6 +45,8 @@ cut=/usr/bin/cut
 awk=/usr/bin/awk
 #sed=/bin/sed
 tr=/usr/bin/tr
+nice=/usr/bin/nice
+exit=exit
 
 executeMySQL() {
   # 's/-\([0-9.]\+\)/(\1)/g'
@@ -133,12 +136,24 @@ $echo -e $green"------------------------------------------------"$reset
 
 if [ -z $arguments ]; then
   # 2>/dev/null disables showing stderr
-  $npiet "$program" 2>/dev/null | $stdbuf -o0 $awk '{print "'$($echo -e $cyan)'" $0 "'$($echo -e $reset)'"}'
+  $nice -n $niceValue $npiet "$program" 2>/dev/null | $stdbuf -o0 $awk '{print "'$($echo -e $cyan)'" $0 "'$($echo -e $reset)'"}' &
   #$npiet "$program" | $stdbuf -o0 $awk '{print "'$($echo -e $cyan)'" $0 "'$($echo -e $reset)'"}'
+  # This get's awk's PID
+  child_pid=$!
 else
-  $echo -e "$arguments" | $npiet "$program" 2>/dev/null | $stdbuf -o0 $awk '{print "'$($echo -e $cyan)'" $0 "'$($echo -e $reset)'"}'
+  $nice -n $niceValue $echo -e "$arguments" | $npiet "$program" 2>/dev/null | $stdbuf -o0 $awk '{print "'$($echo -e $cyan)'" $0 "'$($echo -e $reset)'"}' &
   #$echo -e "$arguments" | $npiet "$program" | $stdbuf -o0 $awk '{print "'$($echo -e $cyan)'" $0 "'$($echo -e $reset)'"}'
+  # This get's awk's PID
+  child_pid=$!
 fi
 $echo -e $reset
 
-# Todo: Add Support for STDIN input with echo "$uservar-from-pathinfo" | $npiet...
+# So, the npiet process may keep running in the background even when the websocket is closed
+# This doesn't seem consistent, so further testing is needed. For Now, I am just lowering the
+# process' priority so it doesn't lag my server again. I had 20 npiet processes running at once.
+# $echo -e "Child PID: $child_pid"
+# The solution seems to be simpler than I thought. Just explicitly exit the program.
+# The npiet program seems to keep running if I break it, like giving stdin to a piet program
+# not meant to take in the input. I am still testing this script to ensure this bug is fixed.
+
+$exit
