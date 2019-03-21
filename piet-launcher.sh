@@ -21,6 +21,8 @@ username="piet"
 passwordFile="piet-password.txt"
 database="piet"
 
+uploadDirectory="/var/web/term-uploads/"
+
 black="\u001b[30m"
 red="\u001b[31m"
 green="\u001b[32m"
@@ -64,21 +66,23 @@ executeMySQL() {
 
   # Sanitize MySQL Input - https://stackoverflow.com/a/4383994/6828099
   sanitized=$($printf "%q" "$stripped")
-  $echo "Sanitized: ""$querystart$sanitized$queryend"
+  #$echo "Sanitized: ""$querystart$sanitized$queryend"
   # Printf is Not Perfect: hellothere\'\"
   #$echo "\"$sanitized\""
 
   if [ "$sanitized" == "''" ]; then # Empty String
     # TODO: Set Default Program ID Here
-    #mysqlOut="/home/web/programs/piet/images/pietquest.png"
-    #echo "Empty"
-    return 0 # Remove Me When Added Default Program ID
+    mysqlOut="0	5c92cd6054ce1	Piet Quest	pietquest.png	Admin	Default Program For Server"
+    return 0
   fi
   #echo "Ran"
 
+  # Format of Response
+  # id  programid programname filename  uploaderipaddress programabout
+  # "1	5c92c662a53ef	Not Set	cowsay.png	71.31.185.234	Not Set" # Only this is output
   mysqlOut=$({
     $echo $password
-  } | $mysql -u $username -D $database -e "$querystart$sanitized$queryend" -p 2>&1) # TODO: Remove Redirect Error For Output
+  } | $mysql --silent -u $username -D $database -e "$querystart$sanitized$queryend" -p 2>/dev/null)
 }
 
 #stdbuf=/usr/local/bin/stdbuf
@@ -94,11 +98,28 @@ $echo -e $cyan"Rover Piet Server"$reset
 #$echo -e $red"Linux User: "`whoami`$reset # To Test Privileges Were Dropped Succesfully
 #$echo -e $yellow"PWD: $PWD"$reset
 #$echo -e $red"PW: $password"$reset
-$echo -e $red"MySQL Output: $mysqlOut"$reset
+#$echo -e $red"MySQL Output: $mysqlOut"$reset
 
+# TODO: Why does injecting tabs into the column data not break it?
+rowID=$($echo "$mysqlOut" | $cut -f1)
+programID=$($echo "$mysqlOut" | $cut -f2)
+programName=$($echo "$mysqlOut" | $cut -f3) # Tab is default delimiter
+originalfilename=$($echo "$mysqlOut" | $cut -f4)
+uploaderIP=$($echo "$mysqlOut" | $cut -f5)
+aboutProg=$($echo "$mysqlOut" | $cut -f6)
 
-program="/home/web/programs/piet/images/pietquest.png"
+program=$uploadDirectory"piet_"$programID".png"
+
+# id  programid programname filename  uploaderipaddress programabout
+# "1	5c92c662a53ef	Not Set	cowsay.png	71.31.185.234	Not Set" # Only this is output
+
+$echo -e $green"------------------------------------------------"$reset
 #$echo -e $yellow"Path: $PATH_INFO" # This environment variable is created by WebSocketd!!!
+$echo -e $yellow"Program Name: $programName"
+$echo -e $yellow"Program ID: $programID"
+$echo -e $yellow"Original File Name: $originalfilename"
+#$echo -e $yellow"Uploader IP: $uploaderIP"
+#$echo -e $yellow"About Program: $aboutProg"
 $echo -e $green"------------------------------------------------"$reset
 $npiet "$program" | $stdbuf -o0 $awk '{print "'$($echo -e $cyan)'" $0 "'$($echo -e $reset)'"}'
 $echo -e $reset
