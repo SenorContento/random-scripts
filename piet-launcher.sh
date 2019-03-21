@@ -206,9 +206,10 @@ fi
 $echo -e $reset
 
 if [ ! -z "$error" ]; then
-  # Because I Only Want To Display Max Execution Steps Error
-  selectedError="configured execution steps exceeded"
-  parseError=$($echo "$error" | $grep "$selectedError")
+  # Because I Only Want To Display Some Errors
+  exceeded_steps="configured execution steps exceeded" # This is triggered if the program runs too long
+  unknown_gif_format="unknown gif format" # This is triggered if using an animated GIF
+  parseError=$($echo "$error" | $grep -E "$exceeded_steps|$unknown_gif_format")
   $echo -e $red"$parseError"$reset
 fi
 
