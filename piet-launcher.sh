@@ -212,6 +212,7 @@ if [ ! -z "$error" ]; then
   # Because I Only Want To Display Some Errors
   exceeded_steps="configured execution steps exceeded" # This is triggered if the program runs too long
   unknown_gif_format="unknown gif format" # This is triggered if using an animated GIF
+  #libpng_warning="libpng warning: iCCP: known incorrect sRGB profile" # Triggered by incorrect sRGB profile
   parseError=$($echo "$error" | $grep -E "$exceeded_steps|$unknown_gif_format")
   $echo -e $red"$parseError"$reset
 fi
