@@ -29,7 +29,10 @@ passwordFile="piet-password.txt"
 database="piet"
 
 # This is the Piet's Quest Program
-defaultPietProgram="5c92cd6054ce1"
+#defaultPietProgram="5c92cd6054ce1"
+
+# This is a Custom Welcome Message I Wrote
+defaultPietProgram="5c942d70dee4c"
 
 uploadDirectory="/var/web/term-uploads/"
 niceValue=19
