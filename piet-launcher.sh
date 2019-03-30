@@ -71,6 +71,7 @@ grep=/bin/grep
 ps=/bin/ps
 wc=/usr/bin/wc
 whoami=/usr/bin/whoami
+cd=cd
 
 numberOfProcesses=$($ps -fu $($whoami) | $grep "$npiet" | $wc -l)
 
@@ -121,7 +122,7 @@ executeMySQL() {
 #stdbuf=/usr/local/bin/stdbuf
 #npiet=/usr/local/bin/npiet
 
-cd $($dirname "$0") # Changes to Program Directory
+$cd $($dirname "$0") # Changes to Program Directory
 password=$($cat "$passwordFile")
 
 # https://stackoverflow.com/a/39754497/6828099
