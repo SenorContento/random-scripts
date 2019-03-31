@@ -24,9 +24,8 @@ userIPAddress=$HTTP_X_REAL_IP
 # Adjust this to what your machine can handle
 allowedNumberOfProcesses=10
 
-username="piet"
-passwordFile="piet-password.txt"
 database="piet"
+mysqlAuth=/home/alex/mysql_auth/piet-password.cnf
 
 # This is the Piet's Quest Program
 #defaultPietProgram="5c92cd6054ce1"
@@ -114,16 +113,17 @@ executeMySQL() {
   # Format of Response
   # id  programid programname filename  uploaderipaddress programabout
   # "1	5c92c662a53ef	Not Set	cowsay.png	71.31.185.234	Not Set" # Only this is output
-  mysqlOut=$({
-    $echo $password
-  } | $mysql --silent -u $username -D $database -e "$querystart$sanitized$queryend" -p 2>/dev/null)
+  # https://stackoverflow.com/a/31875759/6828099
+  #mysqlOut=$({
+  #  $echo $password
+  #} | $mysql --silent -u $username -D $database -e "$querystart$sanitized$queryend" -p 2>/dev/null)
+  mysqlOut=$($mysql --defaults-file="$mysqlAuth" --silent -D $database -e "$querystart$sanitized$queryend" 2>/dev/null)
 }
 
 #stdbuf=/usr/local/bin/stdbuf
 #npiet=/usr/local/bin/npiet
 
-$cd $($dirname "$0") # Changes to Program Directory
-password=$($cat "$passwordFile")
+#$cd $($dirname "$0") # Changes to Program Directory
 
 # https://stackoverflow.com/a/39754497/6828099
 executeMySQL "select * from programs where programid=\"" "\" LIMIT 1;" "$PATH_INFO"
