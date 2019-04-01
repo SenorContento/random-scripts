@@ -167,7 +167,7 @@ fi
 
 arguments=$($echo "$PATH_INFO" | $cut -d/ -f3)
 
-if [ -z $arguments ]; then
+if [ -z "$arguments" ]; then
   transarguments="None"
 else
   transarguments=$arguments
@@ -192,7 +192,7 @@ $echo -e $green"------------------------------------------------"$reset
 $echo -e $yellow"Arguments: $transarguments"$reset
 $echo -e $green"------------------------------------------------"$reset
 
-if [ -z $arguments ]; then
+if [ -z "$arguments" ]; then
   # 2>/dev/null disables showing stderr
   { error=$( { { $nice -n $niceValue $npiet -e "$executionSteps" "$program" | $nice -n $niceValue $stdbuf -o0 $awk '{print "'$($echo -e $cyan)'" $0 "'$($echo -e $reset)'"}' & } 1>&3 ; } 2>&1); } 3>&1
   #$nice -n $niceValue $npiet -e "$executionSteps" "$program" 2>/dev/null | $nice -n $niceValue $stdbuf -o0 $awk '{print "'$($echo -e $cyan)'" $0 "'$($echo -e $reset)'"}' &
