@@ -8,7 +8,7 @@ cd=cd
 tail=/usr/bin/tail
 nice=/usr/bin/nice
 
-mysqlAuth=/home/alex/mysql_auth/maldet-password.cnf
+mysqlAuth=/home/admin/automated/mysql_auth/maldet-password.cnf
 database="$2"
 
 uploadDirectory="/var/web/term-uploads/"

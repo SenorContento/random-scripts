@@ -25,7 +25,7 @@ userIPAddress=$HTTP_X_REAL_IP
 allowedNumberOfProcesses=10
 
 database="piet"
-mysqlAuth=/home/alex/mysql_auth/piet-password.cnf
+mysqlAuth=/home/admin/automated/mysql_auth/piet-password.cnf
 
 # This is the Piet's Quest Program
 #defaultPietProgram="5c92cd6054ce1"

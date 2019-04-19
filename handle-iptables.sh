@@ -3,8 +3,11 @@ iptables=/sbin/iptables
 tee=/usr/bin/tee
 grep=/bin/grep
 wc=/usr/bin/wc
+mkdir=/bin/mkdir
 
 log=/var/log/sesame-gateway/iptables-handler.log
+
+sudo $mkdir -p "$log"
 
 if [ $# -lt 4 ]
 then
@@ -39,7 +42,7 @@ if [ "$action" = "accept" ]; then
   echo "Accept Tables" | $tee -a $log
 
   echo "Checking If Rule Already Exists" | $tee -a $log
-  rules=$(iptables -L INPUT -n | grep $ipaddress | grep $protocol | grep $port | $wc -l)
+  rules=$($iptables -L INPUT -n | grep $ipaddress | grep $protocol | grep $port | $wc -l)
   echo "Debug Rules: \"$rules\"" | $tee -a $log
 
   if [ "$rules" -eq "0" ]; then
@@ -54,7 +57,7 @@ if [ "$action" = "dnat" ] && [ $# -eq 6 ]; then
   echo "DNAT Tables" | $tee -a $log
 
   echo "Checking If Rule Already Exists" | $tee -a $log
-  rules=$(iptables -t nat -L PREROUTING -n | grep $ipaddress | grep $protocol | grep $port | $wc -l)
+  rules=$($iptables -t nat -L PREROUTING -n | grep $ipaddress | grep $protocol | grep $port | $wc -l)
   echo "Debug Rules: \"$rules\"" | $tee -a $log
 
   if [ "$rules" -eq "0" ]; then
