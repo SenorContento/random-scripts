@@ -31,7 +31,7 @@ mysqlAuth=/home/admin/automated/mysql_auth/piet-password.cnf
 #defaultPietProgram="5c92cd6054ce1"
 
 # This is a Custom Welcome Message I Wrote
-defaultPietProgram="5c942d70dee4c"
+defaultPietProgram="5cbdeaa10586b"
 
 uploadDirectory="/var/web/term-uploads/"
 niceValue=19
